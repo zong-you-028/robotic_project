@@ -50,6 +50,13 @@ function animate_robot_3d(q_trajectory, t, dt, title_str)
     y_range = expand_range(y_range);
     z_range = expand_range(z_range);
     
+    % 定義右側子圖的索引位置 (3x4 grid)
+    % 確保圖表只畫在右半邊 (Column 3 & 4)
+    % Row 1: 3, 4
+    % Row 2: 7, 8
+    % Row 3: 11, 12
+    plot_indices = [3, 4, 7, 8, 11, 12];
+    
     %% 動畫循環
     fprintf('開始 3D 姿態動畫...\n');
     
@@ -68,6 +75,7 @@ function animate_robot_3d(q_trajectory, t, dt, title_str)
         %% ==================================================
         %% 左側: 3D 機械手臂姿態視圖（主視圖）
         %% ==================================================
+        % subplot(1, 2, 1) 佔據左半邊
         subplot(1, 2, 1);
         hold on; grid on; axis equal;
         
@@ -176,7 +184,8 @@ function animate_robot_3d(q_trajectory, t, dt, title_str)
         %% 右側: 關節角度即時圖表
         %% ==================================================
         for j = 1:6
-            subplot(3, 4, j+6);
+            % 使用修正後的索引，確保圖表位於右半邊
+            subplot(3, 4, plot_indices(j));
             
             % 繪製完整軌跡（淡色）
             plot(t, q_trajectory(:, j), 'Color', [0.7, 0.7, 0.7], 'LineWidth', 1);

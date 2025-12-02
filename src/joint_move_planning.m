@@ -82,16 +82,9 @@ function joint_move_planning(A, B, C, t_AB, t_BC, t_acc, dt)
     fprintf('繪製結果...\n');
     plot_joint_move_results(t_all, q_all, qd_all, qdd_all, cart_pos, cart_vel, cart_acc, A, B, C);
     
-    %% 動畫
-    fprintf('\n是否要播放動畫? (1=基本動畫, 2=3D姿態動畫, 0=不播放): ');
-    user_input = input('');
-    if user_input == 1
-        fprintf('準備基本動畫...\n');
-        animate_robot(q_all, t_all, dt, 'Joint Move Animation');
-    elseif user_input == 2
-        fprintf('準備3D姿態動畫...\n');
-        animate_robot_3d(q_all, t_all, dt, 'Joint Move - 3D Animation');
-    end
+    %% 動畫 (自動播放 3D 版本)
+    fprintf('\n自動播放 3D 姿態動畫...\n');
+    animate_robot_3d(q_all, t_all, dt, 'Joint Move - 3D Animation');
     
     fprintf('關節空間軌跡規劃完成！\n');
 end
