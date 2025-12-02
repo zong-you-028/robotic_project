@@ -29,10 +29,12 @@ function animate_robot_3d(q_trajectory, t, dt, title_str)
     x_range = [min(all_positions(1,:)), max(all_positions(1,:))];
     y_range = [min(all_positions(2,:)), max(all_positions(2,:))];
     z_range = [min(all_positions(3,:)), max(all_positions(3,:))];
-    % 安全範圍擴充，避免 xlim 報錯
+    
+    % ---【修正重點】範圍檢查與擴充，防止 xlim 報錯---
     x_range = ensure_valid_range(x_range);
     y_range = ensure_valid_range(y_range);
     z_range = ensure_valid_range(z_range);
+    % ---------------------------------------------
     
     plot_indices = [3, 4, 7, 8, 11, 12];
     
@@ -75,7 +77,10 @@ function animate_robot_3d(q_trajectory, t, dt, title_str)
 
         xlabel('x (cm)'); ylabel('y (cm)'); zlabel('z (cm)');
         title(sprintf('%s\nTime: %.2f s', title_str, t(i)));
-        xlim(x_range); ylim(y_range); zlim(z_range); view(45, 30);
+        
+        % 套用修正後的範圍
+        xlim(x_range); ylim(y_range); zlim(z_range); 
+        view(45, 30);
         
         % 右側圖表
         for j = 1:6
@@ -92,9 +97,16 @@ function animate_robot_3d(q_trajectory, t, dt, title_str)
     fprintf('動畫完成！\n');
 end
 
+% --- 新增輔助函式: 確保範圍有效 ---
 function r = ensure_valid_range(r)
     w = r(2) - r(1);
-    if w < 1e-3, m = mean(r); r = m + [-10, 10]; else, r = r + [-w, w]*0.15; end
+    if w < 1e-3  % 如果範圍太小 (例如靜止不動)
+        m = mean(r); 
+        r = m + [-10, 10]; % 給予預設 20cm 寬度
+    else
+        % 正常擴大 15% 以美觀
+        r = r + [-w, w]*0.15; 
+    end
 end
 
 function [positions, frames] = compute_robot_geometry(q, d2, alpha)

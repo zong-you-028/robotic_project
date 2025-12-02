@@ -1,6 +1,6 @@
 % cartesian_move_planning.m
 % ========================================
-% 笛卡爾空間軌跡規劃 (Cartesian Move)
+% 笛卡爾空間軌跡規劃
 % ========================================
 
 function cartesian_move_planning(A, B, C, t_AB, t_BC, t_acc, dt)
@@ -34,7 +34,7 @@ function cartesian_move_planning(A, B, C, t_AB, t_BC, t_acc, dt)
     qdd_all = zeros(n_points, 6);
     
     for i = 1:n_points
-        % squeeze 確保維度為 3x3，避免 horzcat 錯誤
+        % 【維度修正】squeeze 確保為 3x3
         R_curr = squeeze(cart_ori(i, :, :));
         T_target = [R_curr, cart_pos(i, :)' / 2.54; 0 0 0 1];
         
