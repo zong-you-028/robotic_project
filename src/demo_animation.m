@@ -41,12 +41,6 @@ fprintf('  3 - 簡單測試動畫（快速）\n');
 fprintf('========================================\n');
 choice = input('請輸入選項 (1/2/3): ');
 
-fprintf('\n選擇動畫風格:\n');
-fprintf('  1 - 基本動畫\n');
-fprintf('  2 - 3D 姿態動畫（推薦）\n');
-fprintf('========================================\n');
-anim_style = input('請輸入選項 (1/2): ');
-
 switch choice
     case 1
         fprintf('\n執行 Joint Move 規劃...\n');
@@ -70,12 +64,8 @@ switch choice
         t_BC_vec = t_BC_vec(:);
         t_all = [t_AB_vec; t_BC_vec(2:end) + t_AB];
         
-        % 播放動畫
-        if anim_style == 2
-            animate_robot_3d(q_all, t_all, dt, 'Joint Move - 3D Animation');
-        else
-            animate_robot(q_all, t_all, dt, 'Joint Move Animation');
-        end
+        % 播放 3D 動畫
+        animate_robot_3d(q_all, t_all, dt, 'Joint Move - 3D Animation');
         
     case 2
         fprintf('\n執行 Cartesian Move 規劃...\n');
@@ -121,12 +111,8 @@ switch choice
             end
         end
         
-        % 播放動畫
-        if anim_style == 2
-            animate_robot_3d(q_all, t_all, dt, 'Cartesian Move - 3D Animation');
-        else
-            animate_robot(q_all, t_all, dt, 'Cartesian Move Animation');
-        end
+        % 播放 3D 動畫
+        animate_robot_3d(q_all, t_all, dt, 'Cartesian Move - 3D Animation');
         
     case 3
         fprintf('\n執行簡單測試動畫...\n');
@@ -145,12 +131,8 @@ switch choice
             q_traj(:, i) = linspace(q_start(i), q_end(i), n);
         end
         
-        % 播放動畫
-        if anim_style == 2
-            animate_robot_3d(q_traj, t_vec, dt_test, 'Simple Test - 3D Animation');
-        else
-            animate_robot(q_traj, t_vec, dt_test, 'Simple Test Animation');
-        end
+        % 播放 3D 動畫
+        animate_robot_3d(q_traj, t_vec, dt_test, 'Simple Test - 3D Animation');
         
     otherwise
         fprintf('無效的選項。\n');

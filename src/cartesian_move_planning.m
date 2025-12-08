@@ -85,20 +85,25 @@ function cartesian_move_planning(A, B, C, t_AB, t_BC, t_acc, dt)
         end
     end
     
-    %% 繪圖
-    fprintf('繪製結果...\n');
-    plot_cartesian_move_results(t_all, cart_pos, cart_vel, cart_acc, ...
-                                 q_all, qd_all, qdd_all, A, B, C);
+    %% 繪圖與動畫選項
+    fprintf('\n請選擇顯示方式:\n');
+    fprintf('  1 - 只顯示靜態圖表（7張圖）\n');
+    fprintf('  2 - 只顯示 3D 手臂姿態動畫\n');
+    display_choice = input('請輸入選項 (1/2): ');
     
-    %% 動畫
-    fprintf('\n是否要播放動畫? (1=基本動畫, 2=3D姿態動畫, 0=不播放): ');
-    user_input = input('');
-    if user_input == 1
-        fprintf('準備基本動畫...\n');
-        animate_robot(q_all, t_all, dt, 'Cartesian Move Animation');
-    elseif user_input == 2
-        fprintf('準備3D姿態動畫...\n');
+    if display_choice == 1
+        % 只顯示靜態圖表
+        fprintf('繪製結果...\n');
+        plot_cartesian_move_results(t_all, cart_pos, cart_vel, cart_acc, ...
+                                     q_all, qd_all, qdd_all, A, B, C);
+    elseif display_choice == 2
+        % 只顯示動畫
+        fprintf('準備 3D 手臂姿態動畫...\n');
         animate_robot_3d(q_all, t_all, dt, 'Cartesian Move - 3D Animation');
+    else
+        fprintf('無效的選項，預設顯示靜態圖表。\n');
+        plot_cartesian_move_results(t_all, cart_pos, cart_vel, cart_acc, ...
+                                     q_all, qd_all, qdd_all, A, B, C);
     end
     
     fprintf('笛卡爾空間軌跡規劃完成！\n');

@@ -78,13 +78,24 @@ function joint_move_planning(A, B, C, t_AB, t_BC, t_acc, dt)
         end
     end
     
-    %% 繪圖 (這會產生 4 張靜態圖，包含 3D 路徑圖)
-    fprintf('繪製結果...\n');
-    plot_joint_move_results(t_all, q_all, qd_all, qdd_all, cart_pos, cart_vel, cart_acc, A, B, C);
+    %% 繪圖與動畫選項
+    fprintf('\n請選擇顯示方式:\n');
+    fprintf('  1 - 只顯示靜態圖表（4張圖）\n');
+    fprintf('  2 - 只顯示 3D 手臂姿態動畫\n');
+    display_choice = input('請輸入選項 (1/2): ');
     
-    %% 動畫 (已移除，避免與 3D 路徑圖重複)
-    % fprintf('\n自動播放 3D 姿態動畫...\n');
-    % animate_robot_3d(q_all, t_all, dt, 'Joint Move - 3D Animation');
+    if display_choice == 1
+        % 只顯示靜態圖表
+        fprintf('繪製結果...\n');
+        plot_joint_move_results(t_all, q_all, qd_all, qdd_all, cart_pos, cart_vel, cart_acc, A, B, C);
+    elseif display_choice == 2
+        % 只顯示動畫
+        fprintf('準備 3D 手臂姿態動畫...\n');
+        animate_robot_3d(q_all, t_all, dt, 'Joint Move - 3D Animation');
+    else
+        fprintf('無效的選項，預設顯示靜態圖表。\n');
+        plot_joint_move_results(t_all, q_all, qd_all, qdd_all, cart_pos, cart_vel, cart_acc, A, B, C);
+    end
     
     fprintf('關節空間軌跡規劃完成！\n');
 end

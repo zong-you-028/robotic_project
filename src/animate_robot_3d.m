@@ -26,7 +26,7 @@ function animate_robot_3d(q_trajectory, t, dt, title_str)
                  'Position', [50, 50, 1400, 900]);
     
     % 設定播放速度
-    playback_speed = 1.0;  % 1.0 = 實時
+    playback_speed = 2.0;  % 1.0 = 實時
     frame_skip = max(1, round(0.02 / dt));  % 約50 FPS
     
     n_points = size(q_trajectory, 1);
