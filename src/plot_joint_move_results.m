@@ -1,130 +1,141 @@
 % plot_joint_move_results.m
 % ========================================
-% 繪製關節空間軌跡規劃結果
+% 繪製關節空間軌跡規劃結果 (符合範例排版: 4張圖)
+% 1. Angle (6 subplots)
+% 2. Angular Velocity (6 subplots)
+% 3. Angular Acceleration (6 subplots)
+% 4. 3D Plot (Path with A, B, C points)
 % ========================================
 
 function plot_joint_move_results(t, q, qd, qdd, cart_pos, cart_vel, cart_acc, A, B, C)
     
-    %% 圖1: 3D 笛卡爾空間軌跡
-    figure('Name', 'Joint Move - 3D Path', 'NumberTitle', 'off');
-    plot3(cart_pos(:,1), cart_pos(:,2), cart_pos(:,3), 'b-', 'LineWidth', 2);
+    % 獲取螢幕尺寸以利視窗置中
+    scrsz = get(0, 'ScreenSize');
+    
+    % 定義 2D 曲線視窗大小 (寬 x 高)
+    fig_w_2d = 1000; fig_h_2d = 700;
+    get_pos_2d = @() [(scrsz(3)-fig_w_2d)/2, (scrsz(4)-fig_h_2d)/2, fig_w_2d, fig_h_2d];
+    
+    % 定義 3D 圖視窗大小
+    fig_w_3d = 800; fig_h_3d = 600;
+    get_pos_3d = @() [(scrsz(3)-fig_w_3d)/2, (scrsz(4)-fig_h_3d)/2, fig_w_3d, fig_h_3d];
+
+    %% ========================================
+    %% Figure 1: Joint Angles (符合 image_54fed6.png)
+    %% ========================================
+    figure('Name', 'Joint move - angle', 'NumberTitle', 'off', 'Position', get_pos_2d());
+    % 整體標題 (若 Matlab 版本較舊不支援 sgtitle 可註解掉)
+    try sgtitle('呈現結果範例(a) Joint move – angle', 'FontSize', 16); catch, end
+    
+    for i = 1:6
+        subplot(3, 2, i);
+        plot(t, q(:, i), 'LineWidth', 1.2);
+        grid on;
+        
+        % 標題加粗
+        title(sprintf('Joint %d', i), 'FontWeight', 'bold');
+        
+        % Y 軸標籤 (左側欄位顯示，J3 顯示 inch，其餘 deg)
+        if mod(i, 2) == 1
+            if i == 3
+                ylabel('d3 (inch)'); % Joint 3 是移動關節
+            else
+                ylabel('angle (degree)');
+            end
+        end
+        
+        % X 軸標籤 (僅最下列顯示)
+        if i >= 5
+            xlabel('time (s)');
+        end
+        
+        xlim([0, t(end)]);
+    end
+    
+    %% ========================================
+    %% Figure 2: Joint Velocities (符合 image_54feb7.png)
+    %% ========================================
+    figure('Name', 'Joint move - angular velocity', 'NumberTitle', 'off', 'Position', get_pos_2d());
+    try sgtitle('呈現結果範例(a) Joint move – angular velocity', 'FontSize', 16); catch, end
+    
+    for i = 1:6
+        subplot(3, 2, i);
+        plot(t, qd(:, i), 'LineWidth', 1.2);
+        grid on;
+        
+        title(sprintf('Joint %d', i), 'FontWeight', 'bold');
+        
+        if mod(i, 2) == 1
+            if i == 3
+                ylabel('velocity (inch/s)');
+            else
+                ylabel('angular velocity(degree/s)');
+            end
+        end
+        
+        if i >= 5
+            xlabel('time (s)');
+        end
+        xlim([0, t(end)]);
+    end
+    
+    %% ========================================
+    %% Figure 3: Joint Accelerations (符合 image_54fe9a.png)
+    %% ========================================
+    figure('Name', 'Joint move - angular acceleration', 'NumberTitle', 'off', 'Position', get_pos_2d());
+    try sgtitle('呈現結果範例(a) Joint move – angular acceleration', 'FontSize', 16); catch, end
+    
+    for i = 1:6
+        subplot(3, 2, i);
+        plot(t, qdd(:, i), 'LineWidth', 1.2);
+        grid on;
+        
+        title(sprintf('Joint %d', i), 'FontWeight', 'bold');
+        
+        if mod(i, 2) == 1
+            if i == 3
+                ylabel('acceleration (inch/s^2)');
+            else
+                ylabel('angular acceleration(degree/s^2)');
+            end
+        end
+        
+        if i >= 5
+            xlabel('time (s)');
+        end
+        xlim([0, t(end)]);
+    end
+    
+    %% ========================================
+    %% Figure 4: 3D Plot (符合 image_54fe59.png)
+    %% ========================================
+    figure('Name', 'Joint move - 3D plot', 'NumberTitle', 'off', 'Position', get_pos_3d());
+    
+    % 繪製路徑 (Cyan 色線條)
+    plot3(cart_pos(:, 1), cart_pos(:, 2), cart_pos(:, 3), 'c-', 'LineWidth', 2.5);
     hold on;
-    grid on;
     
-    % 標記起點、中間點、終點
-    plot3(A(1,4)*2.54, A(2,4)*2.54, A(3,4)*2.54, 'go', 'MarkerSize', 12, 'MarkerFaceColor', 'g');
-    plot3(B(1,4)*2.54, B(2,4)*2.54, B(3,4)*2.54, 'ro', 'MarkerSize', 12, 'MarkerFaceColor', 'r');
-    plot3(C(1,4)*2.54, C(2,4)*2.54, C(3,4)*2.54, 'mo', 'MarkerSize', 12, 'MarkerFaceColor', 'm');
+    % 提取 A, B, C 座標 (單位: cm)
+    p_A = A(1:3, 4);
+    p_B = B(1:3, 4);
+    p_C = C(1:3, 4);
     
-    % 添加標籤
-    text(A(1,4)*2.54, A(2,4)*2.54, A(3,4)*2.54, '  A', 'FontSize', 14, 'Color', 'g');
-    text(B(1,4)*2.54, B(2,4)*2.54, B(3,4)*2.54, '  B', 'FontSize', 14, 'Color', 'r');
-    text(C(1,4)*2.54, C(2,4)*2.54, C(3,4)*2.54, '  C', 'FontSize', 14, 'Color', 'm');
+    % 標示點 (紅色星號)
+    plot3(p_A(1), p_A(2), p_A(3), 'r*', 'MarkerSize', 8, 'LineWidth', 1.5);
+    plot3(p_B(1), p_B(2), p_B(3), 'r*', 'MarkerSize', 8, 'LineWidth', 1.5);
+    plot3(p_C(1), p_C(2), p_C(3), 'r*', 'MarkerSize', 8, 'LineWidth', 1.5);
     
-    xlabel('x (cm)', 'FontSize', 12);
-    ylabel('y (cm)', 'FontSize', 12);
-    zlabel('z (cm)', 'FontSize', 12);
-    title('3D path of Joint motion', 'FontSize', 14);
-    view(45, 30);
-    axis equal;
+    % 標示文字座標
+    text(p_A(1), p_A(2), p_A(3), sprintf('  A(%.0f, %.0f, %.0f)', p_A), 'FontSize', 10);
+    text(p_B(1), p_B(2), p_B(3), sprintf('  B(%.0f, %.0f, %.0f)', p_B), 'FontSize', 10);
+    text(p_C(1), p_C(2), p_C(3), sprintf('  C(%.0f, %.0f, %.0f)', p_C), 'FontSize', 10);
     
-    %% 圖2: 關節角度變化
-    figure('Name', 'Joint Move - Joint Angles', 'NumberTitle', 'off');
-    for i = 1:6
-        subplot(3, 2, i);
-        plot(t, q(:, i), 'b-', 'LineWidth', 1.5);
-        grid on;
-        xlabel('time (s)', 'FontSize', 10);
-        ylabel(sprintf('angle (degree)'), 'FontSize', 10);
-        title(sprintf('Joint %d', i), 'FontSize', 12);
-    end
+    grid on; axis equal;
+    xlabel('x(cm)'); ylabel('y(cm)'); zlabel('z(cm)');
+    title('3D path of Joint motion', 'FontWeight', 'bold', 'FontSize', 12);
+    try sgtitle('呈現結果範例(a) Joint move – 3D plot', 'FontSize', 16); catch, end
     
-    %% 圖3: 關節角速度
-    figure('Name', 'Joint Move - Angular Velocity', 'NumberTitle', 'off');
-    for i = 1:6
-        subplot(3, 2, i);
-        plot(t, qd(:, i), 'b-', 'LineWidth', 1.5);
-        grid on;
-        xlabel('time (s)', 'FontSize', 10);
-        ylabel('angular velocity (degree/s)', 'FontSize', 10);
-        title(sprintf('Joint %d', i), 'FontSize', 12);
-    end
-    
-    %% 圖4: 關節角加速度
-    figure('Name', 'Joint Move - Angular Acceleration', 'NumberTitle', 'off');
-    for i = 1:6
-        subplot(3, 2, i);
-        plot(t, qdd(:, i), 'b-', 'LineWidth', 1.5);
-        grid on;
-        xlabel('time (s)', 'FontSize', 10);
-        ylabel('angular acceleration (degree/s^2)', 'FontSize', 10);
-        title(sprintf('Joint %d', i), 'FontSize', 12);
-    end
-    
-    %% 圖5: 末端位置 (x, y, z)
-    figure('Name', 'Joint Move - End-effector Position', 'NumberTitle', 'off');
-    
-    subplot(3, 1, 1);
-    plot(t, cart_pos(:, 1), 'b-', 'LineWidth', 1.5);
-    grid on;
-    ylabel('x (cm)', 'FontSize', 10);
-    title('Position of x', 'FontSize', 12);
-    
-    subplot(3, 1, 2);
-    plot(t, cart_pos(:, 2), 'b-', 'LineWidth', 1.5);
-    grid on;
-    ylabel('y (cm)', 'FontSize', 10);
-    title('Position of y', 'FontSize', 12);
-    
-    subplot(3, 1, 3);
-    plot(t, cart_pos(:, 3), 'b-', 'LineWidth', 1.5);
-    grid on;
-    xlabel('Time (s)', 'FontSize', 10);
-    ylabel('z (cm)', 'FontSize', 10);
-    title('Position of z', 'FontSize', 12);
-    
-    %% 圖6: 末端速度
-    figure('Name', 'Joint Move - End-effector Velocity', 'NumberTitle', 'off');
-    
-    subplot(3, 1, 1);
-    plot(t, cart_vel(:, 1), 'b-', 'LineWidth', 1.5);
-    grid on;
-    ylabel('Velocity (cm/s)', 'FontSize', 10);
-    title('Velocity of x', 'FontSize', 12);
-    
-    subplot(3, 1, 2);
-    plot(t, cart_vel(:, 2), 'b-', 'LineWidth', 1.5);
-    grid on;
-    ylabel('Velocity (cm/s)', 'FontSize', 10);
-    title('Velocity of y', 'FontSize', 12);
-    
-    subplot(3, 1, 3);
-    plot(t, cart_vel(:, 3), 'b-', 'LineWidth', 1.5);
-    grid on;
-    xlabel('Time (s)', 'FontSize', 10);
-    ylabel('Velocity (cm/s)', 'FontSize', 10);
-    title('Velocity of z', 'FontSize', 12);
-    
-    %% 圖7: 末端加速度
-    figure('Name', 'Joint Move - End-effector Acceleration', 'NumberTitle', 'off');
-    
-    subplot(3, 1, 1);
-    plot(t, cart_acc(:, 1), 'b-', 'LineWidth', 1.5);
-    grid on;
-    ylabel('Acceleration (cm/s^2)', 'FontSize', 10);
-    title('Acceleration of x', 'FontSize', 12);
-    
-    subplot(3, 1, 2);
-    plot(t, cart_acc(:, 2), 'b-', 'LineWidth', 1.5);
-    grid on;
-    ylabel('Acceleration (cm/s^2)', 'FontSize', 10);
-    title('Acceleration of y', 'FontSize', 12);
-    
-    subplot(3, 1, 3);
-    plot(t, cart_acc(:, 3), 'b-', 'LineWidth', 1.5);
-    grid on;
-    xlabel('Time (s)', 'FontSize', 10);
-    ylabel('Acceleration (cm/s^2)', 'FontSize', 10);
-    title('Acceleration of z', 'FontSize', 12);
+    view(45, 30); % 調整視角
+    hold off;
     
 end

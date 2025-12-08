@@ -78,13 +78,13 @@ function joint_move_planning(A, B, C, t_AB, t_BC, t_acc, dt)
         end
     end
     
-    %% 繪圖
+    %% 繪圖 (這會產生 4 張靜態圖，包含 3D 路徑圖)
     fprintf('繪製結果...\n');
     plot_joint_move_results(t_all, q_all, qd_all, qdd_all, cart_pos, cart_vel, cart_acc, A, B, C);
     
-    %% 動畫 (自動播放 3D 版本)
-    fprintf('\n自動播放 3D 姿態動畫...\n');
-    animate_robot_3d(q_all, t_all, dt, 'Joint Move - 3D Animation');
+    %% 動畫 (已移除，避免與 3D 路徑圖重複)
+    % fprintf('\n自動播放 3D 姿態動畫...\n');
+    % animate_robot_3d(q_all, t_all, dt, 'Joint Move - 3D Animation');
     
     fprintf('關節空間軌跡規劃完成！\n');
 end
